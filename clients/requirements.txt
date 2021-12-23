@@ -1,0 +1,4 @@
+wheel
+six
+requests
+trino
