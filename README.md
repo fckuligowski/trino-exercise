@@ -19,6 +19,7 @@ Downloaded Helm Charts from here - https://github.com/trinodb/charts
 ```
  helm install trino charts/charts/trino --namespace trino --create-namespace
 ```
+Remember that if you change the ConfigMaps, you must delete the coordinator and worker pods.  
 
 Setup for the Client
 ```
@@ -27,11 +28,12 @@ python3 -m venv venv
 source venv/bin/activate
 pip3 install -r requirements.txt
 export PYTHONPATH=$(pwd)
-python -m metrics-handler -u frank -a myurl:8080
+python -m metrics-handler -u trino -a 1.2.3.4
 ```
 
 
 Others?
 ```
+kubectl get pods -n trino --field-selector=status.phase=Running
 gcloud services enable artifactregistry.googleapis.com
 ```
