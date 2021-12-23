@@ -9,8 +9,12 @@ docker tag trino:365-amd64 us-central1-docker.pkg.dev/triino-test/quickstart-doc
 docker push us-central1-docker.pkg.dev/triino-test/quickstart-docker-repo/trino:365-amd64
 ```
 
+Required Services
+- Artifact Repository
+- Source Code Repositories
+- GKE
+
 Others?
 ```
-gcloud services enable artifactregistry.googleapis.com
 gcloud services enable artifactregistry.googleapis.com
 ```
