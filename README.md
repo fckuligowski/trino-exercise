@@ -1,7 +1,7 @@
 # trino-exercise
-This repo is my solution for the [Starburst Data Test](https://starburst.io) to create a Trio cloud deployment.  
+This repo is my (Frank KUligowski) solution for the [Starburst Data Test](https://starburst.io) to create a Trio cloud deployment.  
 This solution was built on the [Google Cloud Platform](https://cloud.google.com/). 
-A GKE Cluster was created in the GCP Console using default cluster settings, and Trino is deployed to that cluster. See the Appendix for more details on the GKE cluster. 
+A GKE Cluster was created in the GCP Console using default cluster settings, and Trino was deployed to that cluster. See the Appendix for more details on the GKE cluster. 
 Trino is deployed to the k8s cluster via a Helm chart.  A Python utility is used to query the Trino deployment for performance metrics, which are displayed to stdout. 
 The Python utility, and all of the commands shown in this document were run from the GCP [Cloud Shell](https://cloud.google.com/shell/docs?hl=en).  
 
@@ -93,6 +93,13 @@ Logging Verbosity:
   ```
 
 # External Resources  
+These document sites were particularly helpful in building this solution.  
+- [Trino Architecture](https://www.oreilly.com/library/view/trino-the-definitive/9781098107703/ch04.html)
+- [Trino documentation](https://trino.io/docs/current/overview/concepts.html)
+- [JMX Connector](https://trino.io/docs/current/connector/jmx.html#configuration)
+- [Trino Docker Image](https://github.com/trinodb/trino/tree/master/core/docker)
+- [Trino Helm Chart](https://github.com/trinodb/charts)
+- [Trino Python Client](https://github.com/trinodb/trino-python-client)
 
 # Services and Tools  
 These GCP resources were used by this solution.
