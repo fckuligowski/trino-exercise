@@ -12,19 +12,20 @@ The Python utility, and all of the commands shown in this document were run from
 # Build and Deploy a Trino Docker Image  
 To create the container image of the Trino application, I first created an [Artifact Registry](https://cloud.google.com/artifact-registry/docs) in GCP.  
 ```
-gcloud artifacts repositories create trino-docker --repository-format=docker --location=us-central1 --description="Docker repository"
+gcloud artifacts repositories create trino-docker --repository-format=docker --location=us-central1 \
+--description="Docker repository"
 ```
 
-Next, I created a 'trino-test' directory to hold all my work and downloaded the Trino Git repo. 
+Next, I created a 'trino-test' directory to hold all my work and then downloaded the Trino Git repo. 
 ```
 mkdir -p ~/trino-test; cd ~/trino-test
 git clone https://github.com/trinodb/trino.git
 ```
-The [core/docker](https://github.com/trinodb/trino/tree/master/core/docker) folder of that repo holds the commands for creating a new Trino container image. There is a shell script that will create it for you, but it has commands to create both an 'amd' and an 'arn' compatible executable, and the 'arn' command won't work in the GCP Cloud Shell (it uses an amd type processor), so I commented this line (31) out of the [core/docker/build-remote.sh](https://github.com/trinodb/trino/blob/master/core/docker/build-remote.sh) script.  
+The [core/docker](https://github.com/trinodb/trino/tree/master/core/docker) folder of that repo holds the commands for creating a new Trino container image. There is a shell script that will create it for you, but it has commands to create both an 'amd' and an 'arm' compatible executable, and the 'arm' command won't work in the GCP Cloud Shell (it uses an amd type processor), so I commented this line (31) out of the [core/docker/build-remote.sh](https://github.com/trinodb/trino/blob/master/core/docker/build-remote.sh) script.  
 ```
 #docker build ${WORK_DIR} --pull --platform linux/arm64 -f arm64.dockerfile -t ${CONTAINER}-arm64 --build-arg "TRINO_VERSION=${TRINO_VERSION}"
 ```
-With that, I could build the container image with the build-remote.sh script, tag the image with the GCP Artifact Registry path, and push the container image to that ```trino-docker`` Artifact Repo. Version '365' was chosen because it seem to be a recent and stable build.  
+With that, I could build the container image with the build-remote.sh script, tag the image with the GCP Artifact Registry path, and push the container image to that 'trino-docker' Artifact Repo. Version '365' was chosen because it seem to be a recent and stable build.  
 ```
 cd ~/trino-test/trino/core/docker
 ./build-remote.sh 365   # Have to comment out the docker build stmt for arm first
@@ -76,7 +77,7 @@ HeapSize=232635616
 HeapSize=314759472
 RunningQueries=1
 ```
-See the [main_process.py](clients/metrics-handler/main_process.py) for the actual queries that are used.  
+See the [main_process.py](clients/metrics-handler/main_process.py) script file for the actual queries that are used.  
 Here is the usage information for the metrics-handler utility.  
 ```
 Metrics Handler for Trino - part of the test for Starburst Data
@@ -115,10 +116,10 @@ Here is an estimate of the time spent on this solution, broken down by major tas
 - Find and use Helm chart: 1 hour
 - Setup GCP and GKE cluster: 1 hour
 - Learn JMX and create client: 2 hours
-- Finalize and Documentation: 2 hour
+- Finalize and Document: 2 hour
 
 # If There Was More Time  
-If we needed to expand this solution to make it more ready for use, here are some candidates for improvement.  
+If we wanted to expand the usability of this solution, here are some candidates for improvement.  
 - Figure out how to setup Trino for HTTPS and deploy.  
 - Configure Trino for User Authentication.  
 - Build the Python client as its own image.  
@@ -127,7 +128,18 @@ If we needed to expand this solution to make it more ready for use, here are som
 ## GKE Cluster  
 Here is the equivalent command line to create the k8s cluster used in this exercise (falls within GCP free limits).  
 ```
-gcloud beta container --project "trino-336014" clusters create "trino-cluster" --zone "us-central1-c" --no-enable-basic-auth --cluster-version "1.21.5-gke.1302" --release-channel "regular" --machine-type "e2-medium" --image-type "COS_CONTAINERD" --disk-type "pd-standard" --disk-size "100" --metadata disable-legacy-endpoints=true --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --max-pods-per-node "110" --num-nodes "3" --logging=SYSTEM,WORKLOAD --monitoring=SYSTEM --enable-ip-alias --network "projects/trino-336014/global/networks/default" --subnetwork "projects/trino-336014/regions/us-central1/subnetworks/default" --no-enable-intra-node-visibility --default-max-pods-per-node "110" --no-enable-master-authorized-networks --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcePersistentDiskCsiDriver --enable-autoupgrade --enable-autorepair --max-surge-upgrade 1 --max-unavailable-upgrade 0 --enable-shielded-nodes --node-locations "us-central1-c"
+gcloud beta container --project "trino-336014" clusters create "trino-cluster" --zone "us-central1-c" \
+--no-enable-basic-auth --cluster-version "1.21.5-gke.1302" --release-channel "regular" --machine-type "e2-medium" \
+--image-type "COS_CONTAINERD" --disk-type "pd-standard" --disk-size "100" --metadata disable-legacy-endpoints=true \
+--scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write",\
+"https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol",\
+"https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" \
+--max-pods-per-node "110" --num-nodes "3" --logging=SYSTEM,WORKLOAD --monitoring=SYSTEM --enable-ip-alias \
+--network "projects/trino-336014/global/networks/default" --subnetwork "projects/trino-336014/regions/us-central1/subnetworks/default" \
+--no-enable-intra-node-visibility --default-max-pods-per-node "110" --no-enable-master-authorized-networks \
+--addons HorizontalPodAutoscaling,HttpLoadBalancing,GcePersistentDiskCsiDriver \
+--enable-autoupgrade --enable-autorepair --max-surge-upgrade 1 --max-unavailable-upgrade 0 \
+--enable-shielded-nodes --node-locations "us-central1-c"
 ```
 This command will get the login credentials for that cluster, and allow the kubectl command to be used on the cluster.  
 ```
