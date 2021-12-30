@@ -1,5 +1,5 @@
 # trino-exercise
-This repo is my (Frank KUligowski) solution for the [Starburst Data Test](https://starburst.io) to create a Trio cloud deployment.  
+This repo is my (Frank Kuligowski's) solution for the [Starburst Data Test](https://starburst.io) to create a Trio cloud deployment.  
 This solution was built on the [Google Cloud Platform](https://cloud.google.com/). 
 A GKE Cluster was created in the GCP Console using default cluster settings, and Trino was deployed to that cluster. See the Appendix for more details on the GKE cluster. 
 Trino is deployed to the k8s cluster via a Helm chart.  A Python utility is used to query the Trino deployment for performance metrics, which are displayed to stdout. 
@@ -10,7 +10,7 @@ The Python utility, and all of the commands shown in this document were run from
 - The [helm](helm) folder holds custom values settings that were supplied to the Helm chart for this solution.  
 
 # Build and Deploy a Trino Docker Image  
-To create the container image of the Trino application, I first created an [Artifact Registry](https://cloud.google.com/artifact-registry/docs) in GCP.  
+To create the container image of the Trino application, I first created an [Artifact Registry](https://cloud.google.com/artifact-registry/docs) repository in GCP.  
 ```
 gcloud artifacts repositories create trino-docker --repository-format=docker --location=us-central1 \
 --description="Docker repository"
